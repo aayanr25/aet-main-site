@@ -1,0 +1,77 @@
+<h2>Home Page Layout</h2>
+<p class="subtitle">Three minimal directions — all have photos + a short passage. Pick what feels right.</p>
+
+<div class="cards">
+
+  <!-- Option A -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#3f2b7e;padding:16px;border-radius:6px;font-family:sans-serif;color:white">
+        <div style="font-size:10px;letter-spacing:2px;color:#cfa151;margin-bottom:6px">ALPHA EPSILON TAU · PURDUE</div>
+        <div style="font-size:22px;font-weight:900;line-height:1.1;margin-bottom:6px">Chi Psi<br><span style="color:#cfa151">Fraternity</span></div>
+        <div style="font-size:9px;color:rgba(255,255,255,0.65);margin-bottom:12px;line-height:1.5">Founded in 2023, we're building a legacy of brotherhood and excellence at Purdue University.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;border-radius:4px;overflow:hidden">
+          <div style="background:#5a3fa8;height:52px;border-radius:3px"></div>
+          <div style="background:#4a33a0;height:52px;border-radius:3px"></div>
+          <div style="background:#6a4fb8;height:52px;border-radius:3px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Hero + Photos Below</h3>
+      <p>Full-width purple hero with the chapter name, a 1–2 sentence passage, then a photo grid. Clean top-to-bottom flow. No other sections.</p>
+    </div>
+  </div>
+
+  <!-- Option B -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#f9f9f9;padding:16px;border-radius:6px;font-family:sans-serif">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+          <div style="background:#3f2b7e;border-radius:4px;height:80px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px">
+            <div style="font-size:8px;letter-spacing:1px;color:#cfa151">ALPHA EPSILON TAU</div>
+            <div style="font-size:14px;font-weight:900;color:white;line-height:1.1">Chi Psi<br><span style="color:#cfa151">Fraternity</span></div>
+          </div>
+          <div style="background:#d0ccd8;border-radius:4px;height:80px"></div>
+        </div>
+        <div style="background:white;border-left:3px solid #cfa151;padding:6px 8px;font-size:8px;color:#555;line-height:1.5;margin-bottom:8px;border-radius:0 3px 3px 0">
+          Founded in 2023 at Purdue University, Alpha Epsilon Tau is built on brotherhood, excellence, and service.
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px">
+          <div style="background:#c8c0d8;height:36px;border-radius:3px"></div>
+          <div style="background:#b8afcc;height:36px;border-radius:3px"></div>
+          <div style="background:#cfc8dc;height:36px;border-radius:3px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Split Hero + Passage + Photos</h3>
+      <p>Split hero: chapter name on the left, a real photo on the right. A short passage below with a gold accent bar, then a photo row. White background, minimal.</p>
+    </div>
+  </div>
+
+  <!-- Option C -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#1a1225;padding:0;border-radius:6px;font-family:sans-serif;overflow:hidden;position:relative">
+        <div style="background:linear-gradient(to bottom, rgba(63,43,126,0.3), rgba(26,18,37,0.95));padding:20px 16px 16px;position:relative">
+          <div style="font-size:9px;letter-spacing:2px;color:#cfa151;margin-bottom:4px">ALPHA EPSILON TAU · PURDUE</div>
+          <div style="font-size:20px;font-weight:900;color:white;line-height:1.1;margin-bottom:8px">Chi Psi<br><span style="color:#cfa151">Fraternity</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;margin-bottom:10px;border-radius:4px;overflow:hidden">
+            <div style="background:#4a3580;height:44px"></div>
+            <div style="background:#3a2870;height:44px"></div>
+            <div style="background:#5a4090;height:44px"></div>
+          </div>
+          <div style="border-top:1px solid rgba(207,161,81,0.3);padding-top:8px;font-size:8px;color:rgba(255,255,255,0.65);line-height:1.5">
+            Founded in 2023. Building a legacy of brotherhood, excellence, and service at Purdue.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Dark Immersive + Photo Strip</h3>
+      <p>Deep dark/purple background, photos embedded in the hero itself as a strip, short passage at the bottom. Very immersive, strong visual identity.</p>
+    </div>
+  </div>
+
+</div>

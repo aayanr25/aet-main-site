@@ -1,0 +1,2 @@
+# Copy this file to .dev.vars (already gitignored) for local wrangler dev.
+GOOGLE_DRIVE_API_KEY=your_api_key_here

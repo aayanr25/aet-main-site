@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans text-gray-900 antialiased;
+  }
+  h1, h2, h3 {
+    @apply font-serif;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center bg-gold text-purple-dark font-semibold tracking-wide px-7 py-3.5 rounded-full hover:bg-gold-light transition-colors duration-200 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2;
+  }
+  .btn-outline {
+    @apply inline-flex items-center justify-center border border-white/40 text-white font-semibold tracking-wide px-7 py-3.5 rounded-full hover:bg-white/10 hover:border-white/70 transition-colors duration-200 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-purple;
+  }
+  .btn-dark-outline {
+    @apply inline-flex items-center justify-center border border-purple/30 text-purple font-semibold tracking-wide px-7 py-3.5 rounded-full hover:bg-purple hover:text-white hover:border-purple transition-colors duration-200 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple focus-visible:ring-offset-2;
+  }
+  .section-heading {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold text-purple;
+  }
+  .section-subheading {
+    @apply text-lg text-gray-600 mt-3 max-w-2xl font-sans;
+  }
+  /* Small uppercase gold eyebrow label */
+  .eyebrow {
+    @apply inline-flex items-center gap-3 text-gold font-sans font-semibold tracking-[0.25em] text-xs uppercase;
+  }
+  .eyebrow::before,
+  .eyebrow.eyebrow--both::after {
+    content: '';
+    @apply block h-px w-8 bg-gold/50;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
