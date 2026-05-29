@@ -1,6 +1,6 @@
 # Chi Psi — Alpha Epsilon Tau (Purdue University)
 
-Website for the Alpha Epsilon Tau chapter of Chi Psi, chartered 2023.
+Website for the Alpha Epsilon Tau.
 
 Built with **React + Vite + TypeScript + Tailwind CSS**, deployed on **Cloudflare Pages**. All photos are pulled live from **Google Drive**, so the site can be kept up to date by editing Drive folders — no code changes required.
 
@@ -8,7 +8,7 @@ Built with **React + Vite + TypeScript + Tailwind CSS**, deployed on **Cloudflar
 
 ## How images work
 
-Each page reads photos from a Google Drive folder. Folder IDs live in
+Each page reads photos from a Google Drive folder (VPO->Photos/Videos->[DONT MOVE] Website Photos). Folder IDs live in
 [`src/config/photos.ts`](src/config/photos.ts):
 
 ```ts
