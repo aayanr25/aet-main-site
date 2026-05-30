@@ -6,7 +6,11 @@
       "Read(//Users/aayanr/.claude/plugins/cache/ui-ux-pro-max-skill/ui-ux-pro-max/2.5.0/.claude/skills/ui-ux-pro-max/**)",
       "Bash(python3 scripts/search.py \"fraternity college organization brotherhood prestigious heritage collegiate\" --design-system -p \"Chi Psi AET\")",
       "Bash(python3 scripts/search.py \"elegant prestigious heritage collegiate serif\" --domain typography -n 3)",
-      "Bash(python3 scripts/search.py \"hero social-proof storytelling immersive\" --domain landing -n 3)"
+      "Bash(python3 scripts/search.py \"hero social-proof storytelling immersive\" --domain landing -n 3)",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('package.json'\\)\\); print\\('test script:', d['scripts'].get\\('test'\\)\\); print\\('vitest:', d['devDependencies'].get\\('vitest'\\)\\)\")",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('tsconfig.app.json'\\)\\); print\\('include:', d.get\\('include'\\)\\); print\\('exclude:', d.get\\('exclude'\\)\\)\")",
+      "Bash(npm test *)",
+      "Bash(npx tsc *)"
     ]
   },
   "enabledPlugins": {

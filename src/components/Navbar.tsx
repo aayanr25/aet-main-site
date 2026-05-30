@@ -31,7 +31,7 @@ export default function Navbar() {
 
   return (
     <nav className="bg-purple/95 backdrop-blur-md text-white sticky top-0 z-50 border-b border-white/10">
-      <div className="max-w-6xl mx-auto pl-2 sm:pl-3 lg:pl-4 pr-4 sm:pr-6 lg:pr-8">
+      <div className="max-w-6xl mx-auto pl-1 sm:pl-2 pr-4 sm:pr-6 lg:pr-8">
         <div className="flex items-center justify-between h-24">
           {/* Logo — the only thing in the top-left */}
           <NavLink

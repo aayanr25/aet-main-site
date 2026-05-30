@@ -99,6 +99,60 @@ touching this.
 
 ---
 
+## Rush calendar (Google Sheet)
+
+The Rush page calendar is driven by a Google Sheet you edit directly — changes
+appear on the site within about a minute, no code or deploy needed. It reuses the
+**same** `GOOGLE_DRIVE_API_KEY` as the photos (no new key, no new env var).
+
+### What you MUST do once (setup)
+
+1. **Enable the Sheets API.** In [Google Cloud Console](https://console.cloud.google.com),
+   select the project that owns your API key → **APIs & Services → Library** →
+   search **"Google Sheets API"** → **Enable**.
+2. **Let the key use Sheets.** **APIs & Services → Credentials** → click your API
+   key. Under **API restrictions**, if "Restrict key" is selected, make sure
+   **both Google Drive API and Google Sheets API** are checked → **Save**.
+   *(If this is missed, the calendar returns a 403 )*
+3. **Share the sheet.** Open the sheet → **Share → General access → Anyone with
+   the link → Viewer**.
+4. **Fill in the config** in [`src/config/rush.ts`](src/config/rush.ts) (these are
+   not secrets, so they live in the repo):
+   - `sheetId` — from the sheet URL: `docs.google.com/spreadsheets/d/`**`<this part>`**`/edit`
+   - `sheetTab` — the tab name, e.g. `Events`
+   - `googleFormEmbedUrl` — in Google Forms: **Send → `< >` (Embed HTML) →** copy
+     the URL inside `src="..."`
+
+> The API key itself is **not** in the code — it stays in `.dev.vars` (local) and
+> Cloudflare Pages → Environment Variables (production), exactly as set up for the
+> photos.
+
+### How to edit the calendar (ongoing)
+
+Edit the sheet directly. **Row 1 must be the header row.** Required columns:
+
+| Date | Time | Title | Location | Type |
+|------|------|-------|----------|------|
+| Sep 8, 2025 | 7:00 PM | Cookout at the Lodge | 123 Northwestern Ave | Open |
+| Sep 11, 2025 | 8:00 PM | Game Night | PMU, Room 230 | Open |
+| Sep 14, 2025 | 6:00 PM | Formal Smoker | The Lodge | Invite-only |
+
+Rules:
+
+- **Column order doesn't matter** and extra columns are ignored — columns are
+  matched by their header name (case-insensitive). Reorder or add your own notes
+  columns freely.
+- **Date** — include the year: `Sep 8, 2025` or `9/8/2025`.
+- **Time** — start time as text: `7:00 PM`.
+- **Type** — `Open` or `Invite-only` (anything starting with "invite" shows the
+  invite badge; blank counts as open).
+- Blank rows, or rows missing a Date or Title, are skipped.
+- Past events disappear automatically; events are shown soonest-first.
+
+To add, change, or remove an event, just edit/add/delete its row in the sheet.
+
+---
+
 ## Local development
 
 ```bash
