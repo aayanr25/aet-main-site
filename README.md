@@ -106,22 +106,13 @@ appear on the site within about a minute, no code or deploy needed. It reuses th
 **same** `GOOGLE_DRIVE_API_KEY` as the photos (no new key, no new env var).
 
 ### What you MUST do once (setup)
-
-1. **Enable the Sheets API.** In [Google Cloud Console](https://console.cloud.google.com),
-   select the project that owns your API key → **APIs & Services → Library** →
-   search **"Google Sheets API"** → **Enable**.
-2. **Let the key use Sheets.** **APIs & Services → Credentials** → click your API
-   key. Under **API restrictions**, if "Restrict key" is selected, make sure
-   **both Google Drive API and Google Sheets API** are checked → **Save**.
-   *(If this is missed, the calendar returns a 403 )*
-3. **Share the sheet.** Open the sheet → **Share → General access → Anyone with
-   the link → Viewer**.
-4. **Fill in the config** in [`src/config/rush.ts`](src/config/rush.ts) (these are
+**Fill in the config** in [`src/config/rush.ts`](src/config/rush.ts) (these are
    not secrets, so they live in the repo):
    - `sheetId` — from the sheet URL: `docs.google.com/spreadsheets/d/`**`<this part>`**`/edit`
    - `sheetTab` — the tab name, e.g. `Events`
    - `googleFormEmbedUrl` — in Google Forms: **Send → `< >` (Embed HTML) →** copy
      the URL inside `src="..."`
+     USE THE SAME RUSH FORM OR YOU NEED TO CHANGE THIS IN THE CODE
 
 > The API key itself is **not** in the code — it stays in `.dev.vars` (local) and
 > Cloudflare Pages → Environment Variables (production), exactly as set up for the
