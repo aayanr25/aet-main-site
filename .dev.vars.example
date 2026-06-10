@@ -1,2 +1,11 @@
 # Copy this file to .dev.vars (already gitignored) for local wrangler dev.
 GOOGLE_DRIVE_API_KEY=your_api_key_here
+
+# Google People API key with write access to the secretary.purduechipsi@gmail.com
+# contacts, used by the newsletter signup to add subscribers to the "Newsletter" label.
+GOOGLE_PEOPLE_API_KEY=your_people_api_key_here
+
+# Google People API OAuth2 access token for newsletter signup.
+# Generate via: https://developers.google.com/people/api/rest/v1/people/createContact
+# Scope needed: https://www.googleapis.com/auth/contacts
+GOOGLE_PEOPLE_OAUTH_TOKEN=your_oauth_token_here

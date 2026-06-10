@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react'
 import { fetchDriveImages, type DriveImage } from '../lib/drive'
 import { getExecBoard, type ExecMember } from '../lib/execBoard'
 import { DRIVE_FOLDER_IDS } from '../config/photos'
+import NewsletterEmbed from '../components/NewsletterEmbed'
+import NewsletterArchive from '../components/NewsletterArchive'
+import NewsletterSignup from '../components/NewsletterSignup'
 
 /*
  * Every image on this page comes from the "about" Google Drive folder.
@@ -145,6 +148,32 @@ cultivation of a unique environment that instills a lifelong commitment to the B
               Executive board photos will appear here once added to the Drive folder.
             </p>
           )}
+        </div>
+      </section>
+
+      {/* Newsletter — current issue embed + archive of past issues */}
+      <section className="py-20 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <p className="eyebrow eyebrow--both mb-4">Newsletter</p>
+            <h2 className="section-heading">AET Newsletter</h2>
+            <p className="section-subheading mx-auto">
+              Stay up to date with our latest news and updates.
+            </p>
+          </div>
+          <NewsletterEmbed />
+          <NewsletterArchive />
+        </div>
+      </section>
+
+      {/* Newsletter signup — join the mailing list */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h3 className="text-2xl md:text-3xl font-bold text-purple">Stay in the Loop</h3>
+          <p className="section-subheading mx-auto mb-8">
+            Enter your email to join our mailing list and receive future newsletters directly.
+          </p>
+          <NewsletterSignup />
         </div>
       </section>
     </>
