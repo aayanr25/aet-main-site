@@ -9,6 +9,7 @@ interface Env {
 interface DriveFile {
   id: string
   name: string
+  modifiedTime?: string // RFC3339; used to pick the most recent "current" newsletter
 }
 
 interface DriveListResponse {
@@ -51,6 +52,11 @@ function isPdf(file: DriveFile): boolean {
   return file.name.toLowerCase().endsWith('.pdf')
 }
 
+// The active newsletter is flagged purely by its filename containing "Newsletter".
+function isNewsletter(file: DriveFile): boolean {
+  return file.name.toLowerCase().includes('newsletter')
+}
+
 // Same-origin proxy URL so Drive credentials never reach the browser.
 function proxyUrl(id: string): string {
   return `/api/newsletter-pdf?id=${id}`
@@ -79,7 +85,7 @@ function parseIssue(name: string): { label: string; dateLabel: string } {
 // Lists every (non-trashed) file in a Drive folder.
 async function listFolder(folderId: string, apiKey: string): Promise<DriveFile[]> {
   const query = encodeURIComponent(`'${folderId}' in parents and trashed = false`)
-  const fields = encodeURIComponent('files(id,name)')
+  const fields = encodeURIComponent('files(id,name,modifiedTime)')
   const driveUrl =
     `https://www.googleapis.com/drive/v3/files?q=${query}&fields=${fields}&key=${apiKey}`
 
@@ -116,16 +122,21 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const pdfs = files.filter(isPdf)
 
   if (type === 'current') {
-    const first = pdfs[0]
+    // Most-recently-modified newsletter PDF wins (normally there's only one;
+    // older issues have been moved to the Old Newsletters subfolder).
+    const current = pdfs
+      .filter(isNewsletter)
+      .sort((a, b) => (b.modifiedTime ?? '').localeCompare(a.modifiedTime ?? ''))[0]
     const payload: NewsletterCurrentResponse = {
-      pdf: first ? { id: first.id, name: first.name, url: proxyUrl(first.id) } : null,
+      pdf: current ? { id: current.id, name: current.name, url: proxyUrl(current.id) } : null,
     }
     return new Response(JSON.stringify(payload), {
       headers: { ...JSON_HEADERS, 'Cache-Control': CACHE },
     })
   }
 
-  // type === 'archive' — newest first, since filenames start with YYYY-MM.
+  // type === 'archive' — every PDF in Old Newsletters, newest first (filenames
+  // start with YYYY-MM).
   const sorted = [...pdfs].sort((a, b) => b.name.localeCompare(a.name))
   const payload: NewsletterArchiveResponse = {
     issues: sorted.map((file) => {

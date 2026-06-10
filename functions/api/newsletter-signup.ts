@@ -1,11 +1,20 @@
 /// <reference types="@cloudflare/workers-types" />
 
 interface Env {
-  GOOGLE_PEOPLE_OAUTH_TOKEN: string
+  // OAuth2 credentials for the secretary.purduechipsi@gmail.com account. The
+  // refresh token is the durable secret; it's exchanged for a short-lived access
+  // token on each request (see getAccessToken below).
+  GOOGLE_PEOPLE_CLIENT_ID: string
+  GOOGLE_PEOPLE_CLIENT_SECRET: string
+  GOOGLE_PEOPLE_REFRESH_TOKEN: string
 }
 
 interface SignupBody {
   email?: unknown
+}
+
+interface TokenResponse {
+  access_token?: string
 }
 
 const JSON_HEADERS = { 'Content-Type': 'application/json' } as const
@@ -29,6 +38,31 @@ function json(body: unknown, status: number): Response {
   })
 }
 
+// Exchanges the long-lived refresh token for a fresh, short-lived access token.
+// Access tokens expire in ~1 hour, so we mint a new one per signup rather than
+// storing one that would go stale. Returns null if the exchange fails.
+async function getAccessToken(env: Env): Promise<string | null> {
+  const res = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      client_id: env.GOOGLE_PEOPLE_CLIENT_ID,
+      client_secret: env.GOOGLE_PEOPLE_CLIENT_SECRET,
+      refresh_token: env.GOOGLE_PEOPLE_REFRESH_TOKEN,
+      grant_type: 'refresh_token',
+    }),
+  })
+
+  if (!res.ok) {
+    const detail = await res.text().catch(() => '')
+    console.error(`Token exchange ${res.status}:`, detail)
+    return null
+  }
+
+  const data = (await res.json()) as TokenResponse
+  return data.access_token ?? null
+}
+
 export const onRequestOptions: PagesFunction = async () => {
   return new Response(null, { status: 204, headers: CORS_HEADERS })
 }
@@ -46,17 +80,23 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return json({ success: false, error: 'Invalid email address' }, 400)
   }
 
-  const token = context.env.GOOGLE_PEOPLE_OAUTH_TOKEN
-  if (!token) {
-    console.error('GOOGLE_PEOPLE_OAUTH_TOKEN is not configured')
+  const { GOOGLE_PEOPLE_CLIENT_ID, GOOGLE_PEOPLE_CLIENT_SECRET, GOOGLE_PEOPLE_REFRESH_TOKEN } =
+    context.env
+  if (!GOOGLE_PEOPLE_CLIENT_ID || !GOOGLE_PEOPLE_CLIENT_SECRET || !GOOGLE_PEOPLE_REFRESH_TOKEN) {
+    console.error('Google People OAuth credentials are not fully configured')
     return json({ success: false, error: 'Something went wrong. Please try again.' }, 500)
   }
 
   try {
+    const accessToken = await getAccessToken(context.env)
+    if (!accessToken) {
+      return json({ success: false, error: 'Something went wrong. Please try again.' }, 500)
+    }
+
     const res = await fetch('https://people.googleapis.com/v1/people:createContact', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
