@@ -12,7 +12,8 @@
       "Bash(npm test *)",
       "Bash(npx tsc *)",
       "Bash(python3 -c 'import urllib.parse;print\\(urllib.parse.quote\\(\"'\\\\''1vh_6qMf2ClzUdk0VZQ9-lIzwiUB60xGI'\\\\'' in parents and mimeType contains '\\\\''image/'\\\\'' and trashed = false\"\\)\\)')",
-      "Bash(curl -s 'https://www.googleapis.com/drive/v3/files?q=__CMDSUB_OUTPUT__&fields=files\\(id,name\\)&key=AIzaSyANTFf9BJE2-pIJql4voRZeDJ0_LlkCjHE')"
+      "Bash(curl -s 'https://www.googleapis.com/drive/v3/files?q=__CMDSUB_OUTPUT__&fields=files\\(id,name\\)&key=AIzaSyANTFf9BJE2-pIJql4voRZeDJ0_LlkCjHE')",
+      "Bash(echo \"EXIT:$?\")"
     ]
   },
   "enabledPlugins": {

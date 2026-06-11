@@ -80,7 +80,7 @@ export default function About() {
           <p className="text-gold font-semibold tracking-widest text-sm uppercase mb-4">Who We Are</p>
           <h1 className="text-5xl md:text-6xl font-bold mb-6">About Chi Psi</h1>
           <p className="text-white/80 text-lg max-w-2xl mx-auto">
-            Alpha Epsilon Tau is one of the newest chapters in the Chi Psi national fraternity — built from the ground up by Purdue students who believed in something different.
+            Alpha Epsilon Tau is one of the newest Alphas in the Chi Psi national fraternity — built from the ground up by Purdue students who believed in something different.
           </p>
         </div>
       </section>
@@ -104,7 +104,7 @@ export default function About() {
             <div className={founder ? '' : 'md:col-span-2'}>
               <h2 className="section-heading mb-6">Our Story</h2>
               <p className="text-gray-600 leading-relaxed mb-4">
-                Chi Psi was founded nationally in 1841 at Union College and has grown to include chapters at leading universities across the United States. Alpha Epsilon Tau was chartered in 2023 at Purdue University.
+                Chi Psi was founded nationally in 1841 at Union College and has grown to include Alphas at leading universities across the United States. Alpha Epsilon Tau was chartered in 2023 at Purdue University.
               </p>
               <p className="text-gray-600 leading-relaxed">
                 We were built by a group of Purdue students who wanted to create a fraternity defined by genuine brotherhood, academic achievement, and a commitment to making a positive impact — on campus and beyond.

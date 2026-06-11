@@ -214,15 +214,15 @@ export default function Brothers() {
         {step === 'passcode' && (
           <form onSubmit={handlePasscodeSubmit} className="w-full max-w-md text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-3">Welcome, {firstName}.</h1>
-            <p className="text-white/70 mb-8">Enter the chapter passcode to continue.</p>
+            <p className="text-white/70 mb-8">Enter the Alpha passcode to continue.</p>
             <input
               ref={passcodeRef}
               autoFocus
               type="password"
               value={passcodeInput}
               onChange={(e) => setPasscodeInput(e.target.value)}
-              placeholder="Chapter passcode"
-              aria-label="Chapter passcode"
+              placeholder="Alpha passcode"
+              aria-label="Alpha passcode"
               className={INPUT_CLASS}
             />
             {passcodeError && <p className="mt-3 text-sm text-red-300">{passcodeError}</p>}
@@ -239,12 +239,12 @@ export default function Brothers() {
               <PortalCard
                 icon={<BagIcon />}
                 title="Apparel"
-                description="Browse and order chapter apparel."
+                description="Browse and order Alpha apparel."
                 href="https://apparel.purduechipsi.com"
               />
               <PortalCard
                 icon={<BookIcon />}
-                title="Chapter History"
+                title="Alpha History"
                 description="Explore the story of Alpha Epsilon Tau."
                 href="https://history.purduechipsi.com"
               />
