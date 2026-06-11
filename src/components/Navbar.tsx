@@ -1,7 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
-import { fetchLogo } from '../lib/drive'
-import { DRIVE_FOLDER_IDS } from '../config/photos'
 
 const links = [
   { to: '/', label: 'Home' },
@@ -12,17 +10,6 @@ const links = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
-  const [logoUrl, setLogoUrl] = useState<string | null>(null)
-
-  useEffect(() => {
-    let active = true
-    fetchLogo(DRIVE_FOLDER_IDS.home)
-      .then((logo) => active && setLogoUrl(logo?.fullUrl ?? null))
-      .catch(() => active && setLogoUrl(null))
-    return () => {
-      active = false
-    }
-  }, [])
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     `relative text-sm tracking-wide transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-purple rounded ${
@@ -39,16 +26,11 @@ export default function Navbar() {
             className="shrink-0 flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold rounded"
             aria-label="Chi Psi — Alpha Epsilon Tau, home"
           >
-            {logoUrl ? (
-              <img
-                src={logoUrl}
-                alt="Chi Psi Alpha Epsilon Tau"
-                className="h-16 sm:h-20 w-auto object-contain"
-              />
-            ) : (
-              // Fallback until the logo loads (or if none is found in Drive)
-              <span className="font-serif text-gold font-bold text-2xl tracking-wide">ΧΨ</span>
-            )}
+            <img
+              src="/favicon.png"
+              alt="Chi Psi Alpha Epsilon Tau"
+              className="h-16 sm:h-20 w-auto object-contain"
+            />
           </NavLink>
 
           {/* Desktop links — minimalist, generous spacing */}
