@@ -1,8 +1,8 @@
-				import worker, * as OTHER_EXPORTS from "/Users/aayanr/dev/chipsi-main-site/.wrangler/tmp/pages-CR33Wp/functionsWorker-0.9243348102157549.mjs";
+				import worker, * as OTHER_EXPORTS from "/Users/aayanr/dev/chipsi-main-site/.wrangler/tmp/pages-kVixCI/functionsWorker-0.6425048334053614.mjs";
 				import * as __MIDDLEWARE_0__ from "/Users/aayanr/dev/chipsi-main-site/node_modules/wrangler/templates/middleware/middleware-ensure-req-body-drained.ts";
 import * as __MIDDLEWARE_1__ from "/Users/aayanr/dev/chipsi-main-site/node_modules/wrangler/templates/middleware/middleware-miniflare3-json-error.ts";
 
-				export * from "/Users/aayanr/dev/chipsi-main-site/.wrangler/tmp/pages-CR33Wp/functionsWorker-0.9243348102157549.mjs";
+				export * from "/Users/aayanr/dev/chipsi-main-site/.wrangler/tmp/pages-kVixCI/functionsWorker-0.6425048334053614.mjs";
 				const MIDDLEWARE_TEST_INJECT = "__INJECT_FOR_TESTING_WRANGLER_MIDDLEWARE__";
 				export const __INTERNAL_WRANGLER_MIDDLEWARE__ = [
 					

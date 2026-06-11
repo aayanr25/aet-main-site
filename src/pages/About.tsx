@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { fetchDriveImages, type DriveImage } from '../lib/drive'
 import { getExecBoard, type ExecMember } from '../lib/execBoard'
 import { DRIVE_FOLDER_IDS } from '../config/photos'
 import NewsletterEmbed from '../components/NewsletterEmbed'
-import NewsletterArchive from '../components/NewsletterArchive'
 import NewsletterSignup from '../components/NewsletterSignup'
 
 /*
@@ -151,7 +151,7 @@ cultivation of a unique environment that instills a lifelong commitment to the B
         </div>
       </section>
 
-      {/* Newsletter — current issue embed + archive of past issues */}
+      {/* Newsletter — current issue embed; past issues live on /newsletters */}
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -162,7 +162,11 @@ cultivation of a unique environment that instills a lifelong commitment to the B
             </p>
           </div>
           <NewsletterEmbed />
-          <NewsletterArchive />
+          <div className="mt-8 text-center">
+            <Link to="/newsletters" className="btn-dark-outline">
+              Past Newsletters
+            </Link>
+          </div>
         </div>
       </section>
 

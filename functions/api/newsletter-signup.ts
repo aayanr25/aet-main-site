@@ -104,7 +104,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         memberships: [
           {
             // TODO: replace 'contactGroups/Newsletter' with the actual resourceName from the Google People API for the 'Newsletter' label. Run: GET https://people.googleapis.com/v1/contactGroups to find it.
-            contactGroupMembership: { contactGroupResourceName: 'contactGroups/Newsletter' },
+            contactGroupMembership: { contactGroupResourceName: 'contactGroups/4ecfd5f88313301' },
           },
         ],
       }),

@@ -61,6 +61,16 @@ export default function Footer() {
         <div className="border-t border-white/20 mt-8 pt-6 text-center text-xs text-white/50">
           {new Date().getFullYear()} Chi Psi — Alpha Epsilon Tau, Purdue University. All rights reserved.
         </div>
+
+        {/* Subtle, intentionally low-key entry point to the gated Brothers portal */}
+        <div className="mt-4 text-center">
+          <Link
+            to="/brothers"
+            className="text-xs text-white/30 no-underline hover:text-white/60 hover:underline transition-colors"
+          >
+            Brothers
+          </Link>
+        </div>
       </div>
     </footer>
   )

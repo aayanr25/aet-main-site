@@ -39,10 +39,18 @@ const JSON_HEADERS = { 'Content-Type': 'application/json' } as const
 // request per load, so it isn't subject to the throttling the image endpoint hit.
 const CACHE = 's-maxage=60'
 
-const MONTHS = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
 ] as const
+
+// Lookup for parsing filenames — accepts full month names and 3-letter
+// abbreviations, case-insensitively.
+const MONTH_INDEX: Record<string, number> = {}
+MONTH_NAMES.forEach((name, i) => {
+  MONTH_INDEX[name.toLowerCase()] = i
+  MONTH_INDEX[name.slice(0, 3).toLowerCase()] = i
+})
 
 function jsonError(message: string, status: number): Response {
   return new Response(JSON.stringify({ error: message }), { status, headers: JSON_HEADERS })
@@ -62,24 +70,19 @@ function proxyUrl(id: string): string {
   return `/api/newsletter-pdf?id=${id}`
 }
 
-// Turns a filename like "2025-09_Fall-Welcome.pdf" into a readable label
-// ("Fall Welcome") and a month label ("Sep 2025"). Files without the
-// `YYYY-MM_` prefix fall back to the bare filename for the label.
-function parseIssue(name: string): { label: string; dateLabel: string } {
-  const base = name.replace(/\.pdf$/i, '')
-  const match = base.match(/^(\d{4})-(\d{2})_(.*)$/)
-  if (!match) {
-    return { label: base.replace(/-/g, ' '), dateLabel: '' }
+// Parses the newsletter naming convention "[Month] [Year] Newsletter.pdf"
+// (e.g. "March 2025 Newsletter.pdf") into a display label ("March 2025") and a
+// chronological sort key (higher = newer). Filenames that don't match fall back
+// to the bare filename and sort to the bottom.
+function parseIssue(name: string): { label: string; dateLabel: string; sortKey: number } {
+  const base = name.replace(/\.pdf$/i, '').trim()
+  const match = base.match(/([A-Za-z]+)\s+(\d{4})/)
+  const monthIdx = match ? MONTH_INDEX[match[1].toLowerCase()] : undefined
+  if (match && monthIdx !== undefined) {
+    const year = Number(match[2])
+    return { label: `${MONTH_NAMES[monthIdx]} ${year}`, dateLabel: '', sortKey: year * 12 + monthIdx }
   }
-  const [, year, month, rest] = match
-  const label = rest
-    .replace(/-/g, ' ')
-    .split(' ')
-    .filter(Boolean)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ')
-  const monthName = MONTHS[Number(month) - 1] ?? month
-  return { label, dateLabel: `${monthName} ${year}` }
+  return { label: base, dateLabel: '', sortKey: -1 }
 }
 
 // Lists every (non-trashed) file in a Drive folder.
@@ -89,7 +92,12 @@ async function listFolder(folderId: string, apiKey: string): Promise<DriveFile[]
   const driveUrl =
     `https://www.googleapis.com/drive/v3/files?q=${query}&fields=${fields}&key=${apiKey}`
 
-  const res = await fetch(driveUrl)
+  let res: Response
+  try {
+    res = await fetch(driveUrl)
+  } catch {
+    throw new Error('Failed to reach Google Drive API')
+  }
   if (!res.ok) {
     const body = await res.text().catch(() => '')
     console.error(`Drive API ${res.status}:`, body)
@@ -115,8 +123,11 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   let files: DriveFile[]
   try {
     files = await listFolder(folderId, apiKey)
-  } catch {
-    return jsonError('Failed to reach Google Drive API', 502)
+  } catch (err) {
+    // Surface the real cause (e.g. "Google Drive API error: 404" when the folder
+    // ID is wrong or the folder isn't shared publicly) instead of always blaming
+    // the network.
+    return jsonError(err instanceof Error ? err.message : 'Failed to reach Google Drive API', 502)
   }
 
   const pdfs = files.filter(isPdf)
@@ -135,14 +146,19 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     })
   }
 
-  // type === 'archive' — every PDF in Old Newsletters, newest first (filenames
-  // start with YYYY-MM).
-  const sorted = [...pdfs].sort((a, b) => b.name.localeCompare(a.name))
+  // type === 'archive' — every PDF in Old Newsletters, newest first by the
+  // "[Month] [Year] Newsletter.pdf" naming convention.
+  const sorted = pdfs
+    .map((file) => ({ file, ...parseIssue(file.name) }))
+    .sort((a, b) => b.sortKey - a.sortKey || b.file.name.localeCompare(a.file.name))
   const payload: NewsletterArchiveResponse = {
-    issues: sorted.map((file) => {
-      const { label, dateLabel } = parseIssue(file.name)
-      return { id: file.id, name: file.name, label, dateLabel, url: proxyUrl(file.id) }
-    }),
+    issues: sorted.map(({ file, label, dateLabel }) => ({
+      id: file.id,
+      name: file.name,
+      label,
+      dateLabel,
+      url: proxyUrl(file.id),
+    })),
   }
   return new Response(JSON.stringify(payload), {
     headers: { ...JSON_HEADERS, 'Cache-Control': CACHE },

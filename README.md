@@ -147,11 +147,25 @@ To add, change, or remove an event, just edit/add/delete its row in the sheet.
 ## Newsletter
 
 The **About** page shows the chapter newsletter: the current issue embedded as a
-PDF, a grid of past issues, and an email signup form. Like the rest of the site,
-the newsletter is kept up to date by editing Drive — **no code changes required**
-to publish a new issue. It reuses the **same** `GOOGLE_DRIVE_API_KEY` as the
-photos for reading the PDFs (the email signup uses a separate credential — see
-[Email signup](#email-signup) below).
+PDF, a **Past Newsletters** button, and an email signup form. The button links to
+a dedicated **`/newsletters`** page that lists past issues as clickable cards.
+Like the rest of the site, the newsletter is kept up to date by editing Drive —
+**no code changes required** to publish a new issue. It reuses the **same**
+`GOOGLE_DRIVE_API_KEY` as the photos for reading the PDFs (the email signup uses a
+separate credential — see [Email signup](#email-signup) below).
+
+### Naming convention
+
+Name every newsletter PDF like this:
+
+```
+[Month] [Year] Newsletter.pdf
+```
+
+For example: **`March 2025 Newsletter.pdf`**. This single name works everywhere —
+the word `Newsletter` is how the current issue is detected, and the `Month Year`
+is used to label and chronologically order past issues. When you archive an issue,
+just move the file as-is; no renaming needed.
 
 ### Where the files live
 
@@ -189,33 +203,33 @@ The current newsletter is identified **by filename**, not by a fixed name or ID:
 
 ### Past issues (the archive)
 
-Every PDF in the **`Old Newsletters`** subfolder is shown as a past issue, newest
-first. To get clean labels, name archived files like this:
+Past issues live on their own page at **`/newsletters`** (reached via the
+**Past Newsletters** button on the About page). Old newsletters are **never
+embedded inline** — each is shown as a card that opens the full PDF in a new tab.
 
-```
-YYYY-MM_Issue-Title.pdf
-```
+Every PDF in the **`Old Newsletters`** subfolder is listed there, **newest first**,
+using the `[Month] [Year] Newsletter.pdf` naming convention above:
 
-| Drive filename            | Shown label   | Shown date |
-| ------------------------- | ------------- | ---------- |
-| `2025-09_Fall-Welcome.pdf`| Fall Welcome  | Sep 2025   |
-| `2025-12_Winter-Recap.pdf`| Winter Recap  | Dec 2025   |
+| Drive filename                  | Shown label |
+| ------------------------------- | ----------- |
+| `March 2025 Newsletter.pdf`     | March 2025  |
+| `September 2024 Newsletter.pdf` | September 2024 |
 
-- The `YYYY-MM_` prefix sorts the list and produces the date label; hyphens in the
-  title become spaces and each word is capitalized.
-- Files that don't follow this pattern still appear — they just fall back to using
-  the raw filename as the label, with no date.
-- If the subfolder is empty, the "Past Issues" section is hidden entirely.
+- The `Month Year` in the filename both labels each card and orders the list
+  chronologically (full month names or 3-letter abbreviations both work).
+- Files that don't follow this pattern still appear — they fall back to showing the
+  raw filename and sort to the bottom of the list.
+- If the subfolder is empty, the page shows a "No past newsletters yet" message.
 
 ### Updating the newsletter (no code required)
 
 To publish a new issue:
 
 1. **Archive the old one** — move the current newsletter PDF into the
-   **`Old Newsletters`** subfolder, renaming it to `YYYY-MM_Title.pdf` for a tidy
-   archive label.
-2. **Upload the new one** — drop the new PDF into the **about** folder with
-   `Newsletter` somewhere in its filename.
+   **`Old Newsletters`** subfolder. No renaming needed — it already follows the
+   `[Month] [Year] Newsletter.pdf` convention.
+2. **Upload the new one** — drop the new PDF into the **about** folder, named
+   `[Month] [Year] Newsletter.pdf` (e.g. `March 2025 Newsletter.pdf`).
 
 The site picks up the change within about a minute. No deploy needed.
 
@@ -259,7 +273,63 @@ shows a friendly "something went wrong" error on submit.
 | [`functions/api/newsletter-signup.ts`](functions/api/newsletter-signup.ts) | Validates the email and creates the contact via the People API |
 | [`src/config/newsletter.ts`](src/config/newsletter.ts) | The two folder IDs |
 | [`src/lib/newsletter.ts`](src/lib/newsletter.ts) | Browser-side fetch helpers + types |
-| `src/components/Newsletter*.tsx` | The embed, archive grid, and signup form (rendered on the About page) |
+| `src/components/Newsletter*.tsx` | The current-issue embed and signup form (on the About page) |
+| [`src/pages/Newsletters.tsx`](src/pages/Newsletters.tsx) | The `/newsletters` page listing past issues as cards |
+
+---
+
+## Brothers portal
+
+`/brothers` is a members-only portal. It is **not** in the navbar — it's reached
+via a subtle "Brothers" link at the very bottom of the footer, or directly by URL.
+It renders standalone (full-screen, no navbar/footer) and gates content behind two
+steps:
+
+1. **Name** — the visitor types their name; it's checked against the chapter
+   roster (a Google Sheet).
+2. **Passcode** — a single shared chapter passcode.
+
+After both pass, the portal shows link cards to the apparel and chapter-history
+sites. Auth lasts for the **browser session only** (`sessionStorage` key
+`aet_brothers_auth`); reopening the tab re-prompts, but a reload within the same
+session skips straight to the portal.
+
+### The roster (Google Sheet)
+
+The roster reuses the **same** `GOOGLE_DRIVE_API_KEY` as the photos and calendar.
+Its ID and tab name live in [`src/config/brothers.ts`](src/config/brothers.ts).
+
+The sheet has a header row, then one brother per row:
+
+| Column A: `First` | Column B: `Last` | Column C: `Nickname` (optional) |
+| ----------------- | ---------------- | ------------------------------- |
+
+A typed name is accepted (case-insensitive) if it matches `First Last`,
+`Nickname Last`, or `Nickname` on its own. The roster is **never displayed** — it's
+only used to validate the typed name.
+
+> **The roster sheet must be shared "Anyone with the link → Viewer,"** exactly like
+> the rush calendar sheet. An API key can't read a private sheet, so `/api/members`
+> will return `Failed to load roster` until it's shared. Also confirm the tab name
+> in `src/config/brothers.ts` matches the real sheet (default `Sheet1`).
+
+### The passcode
+
+The shared passcode is the env var **`BROTHERS_PASSCODE`** (set in `.dev.vars`
+locally and in Cloudflare Pages for production). It is compared server-side in
+[`functions/api/verify-passcode.ts`](functions/api/verify-passcode.ts) and never
+ships to the browser. To change it, update the env var — no code change needed.
+
+### How it works (file map)
+
+| File | Role |
+| ---- | ---- |
+| [`functions/api/members.ts`](functions/api/members.ts) | Returns the roster as a minimal JSON array (`first`/`last`/`nickname`) |
+| [`functions/api/verify-passcode.ts`](functions/api/verify-passcode.ts) | Compares a POSTed passcode against `BROTHERS_PASSCODE` |
+| [`src/config/brothers.ts`](src/config/brothers.ts) | Roster sheet ID/tab + sessionStorage key |
+| [`src/lib/brothers.ts`](src/lib/brothers.ts) | Browser-side fetch helpers + name-matching logic |
+| [`src/pages/Brothers.tsx`](src/pages/Brothers.tsx) | The `/brothers` page (name → passcode → portal) |
+| [`src/components/SiteLayout.tsx`](src/components/SiteLayout.tsx) | Navbar + footer wrapper for the public pages (so `/brothers` can opt out) |
 
 ---
 
@@ -276,6 +346,7 @@ npm run build                    # type-check (app + functions) and bundle
 newsletter PDFs. To test the **newsletter email signup** locally, also set
 `GOOGLE_PEOPLE_CLIENT_ID`, `GOOGLE_PEOPLE_CLIENT_SECRET`, and
 `GOOGLE_PEOPLE_REFRESH_TOKEN` in `.dev.vars` (see [Email signup](#email-signup)).
+To test the **Brothers portal** passcode locally, also set `BROTHERS_PASSCODE`.
 
 ## Deploying
 
@@ -283,7 +354,95 @@ Connect the repo to Cloudflare Pages with build command `npm run build` and
 output directory `dist`. In the Pages project's environment variables
 (Production **and** Preview), set:
 
-- `GOOGLE_DRIVE_API_KEY` — required (photos, calendar, newsletter PDFs).
+- `GOOGLE_DRIVE_API_KEY` — required (photos, calendar, newsletter PDFs, roster).
 - `GOOGLE_PEOPLE_CLIENT_ID`, `GOOGLE_PEOPLE_CLIENT_SECRET`,
   `GOOGLE_PEOPLE_REFRESH_TOKEN` — required only if the newsletter email signup is
   in use.
+- `BROTHERS_PASSCODE` — required for the Brothers portal passcode step.
+
+---
+
+## Handoff & Secrets Management
+
+This section is written for a future secretary or VPO with **no technical
+background**. "Secrets" are the small set of private passwords and keys that let
+the website talk to Google and protect the Brothers portal. They are **not** in
+the code on GitHub — they are stored separately, on purpose, so they stay private.
+This section explains where they live, how to hand them off to the next officer,
+and what to do if something breaks.
+
+### Where secrets live in production (the live website)
+
+The live website runs on **Cloudflare Pages**. The secrets it uses are stored in
+the Cloudflare dashboard, here:
+
+> **Workers & Pages → `aet-main-site` → Settings → Environment variables**
+
+Anyone who can log in to the **secretary.purduechipsi@gmail.com** Cloudflare
+account can view and manage these values there. The good news: these secrets
+**persist automatically** in Cloudflare. When leadership changes, you do **not**
+need to re-enter them or do anything — they stay in place and the live site keeps
+working. You only touch them if a value actually needs to change (for example,
+changing the Brothers passcode each semester).
+
+### Where secrets live for local development (a developer's laptop)
+
+If a developer wants to run the website on their own computer to make changes,
+the secrets live in a single file named **`.dev.vars`** in the root folder of the
+project on **their own machine**.
+
+- This file is **intentionally hidden from GitHub** (it is "gitignored"), so it
+  will **never** appear in the public code repository. That is correct and
+  expected — it is how the secrets stay private.
+- Because it is never uploaded, every new developer who downloads ("clones") the
+  project must **create this file by hand.** The easy way: copy the provided
+  template file `.dev.vars.example` to a new file named `.dev.vars`, then fill in
+  the real values. (See [Local development](#local-development) above for the
+  copy command.)
+
+### The secrets handoff process (changing officers)
+
+When you hand the website off to the next officer, the outgoing officer must pass
+the secret values to the incoming officer **through a secure channel**.
+
+- **Do not** send secrets over email, and **do not** post them in Slack, GroupMe,
+  Discord, or any group chat.
+- **Recommended methods:** a **private Google Doc shared only with
+  secretary.purduechipsi@gmail.com**, or a **password manager**.
+
+A few clarifications so nobody panics:
+
+- The incoming officer needs these values **only if they plan to run the site
+  locally** on their own laptop for development.
+- They do **not** need the secrets just to push code changes to GitHub —
+  Cloudflare already holds the production secrets and applies them automatically
+  when the site rebuilds.
+
+### Every secret the site uses (and what each one does)
+
+| Secret | What it does | Where it comes from |
+| ------ | ------------ | ------------------- |
+| **`GOOGLE_DRIVE_API_KEY`** | Lets the site read the photos, the rush calendar, the exec board, the newsletter PDFs, and the member roster from Google Drive and Google Sheets. | Google Cloud Console → APIs & Services → Credentials. |
+| **`GOOGLE_PEOPLE_CLIENT_ID`** | The OAuth client ID used by the newsletter email signup feature. | Google Cloud Console → APIs & Services → Credentials → OAuth 2.0 Client IDs. |
+| **`GOOGLE_PEOPLE_CLIENT_SECRET`** | The OAuth client secret, paired with the client ID above. | Google Cloud Console (the same OAuth 2.0 Client ID as above). |
+| **`GOOGLE_PEOPLE_REFRESH_TOKEN`** | The permanent token that authorizes the site to add new emails to the **Newsletter** label in secretary.purduechipsi@gmail.com's Google Contacts. | Generated once via the **OAuth 2.0 Playground**. **Never regenerate this unless something is broken** — making a new one immediately invalidates the old one. |
+| **`BROTHERS_PASSCODE`** | The shared passcode brothers type in to enter the Brothers portal. Can be any string you choose. | You set it. Change it each semester by updating the value in the Cloudflare dashboard and telling the brothers the new one. |
+
+### What NOT to do
+
+- **Never** commit the `.dev.vars` file to GitHub.
+- **Never** share secrets over email or in group chats.
+- **Never** regenerate the `GOOGLE_PEOPLE_REFRESH_TOKEN` unless you have confirmed
+  the current one is actually broken (regenerating invalidates the old one).
+- **Never** delete the Google Cloud project named **"AET Website"** — the site's
+  Google access depends on it.
+
+### If something breaks
+
+- **The newsletter signup stops working.** The most likely cause is that the
+  OAuth **refresh token was revoked**, or the Google Cloud project was changed.
+  The fix: go through the **OAuth 2.0 Playground** flow again (the steps are in the
+  project handoff doc), update **`GOOGLE_PEOPLE_REFRESH_TOKEN`** in the Cloudflare
+  dashboard, and then redeploy the site.
+- **Photos or the calendar stop loading.** Check that **`GOOGLE_DRIVE_API_KEY`** is
+  still valid in the Google Cloud Console.

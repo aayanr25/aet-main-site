@@ -12,5 +12,5 @@ import { DRIVE_FOLDER_IDS } from './photos'
 // drive.google.com/drive/folders/<FOLDER_ID>
 export const NEWSLETTER_FOLDER_IDS = {
   current: DRIVE_FOLDER_IDS.about, // search the about folder for the current newsletter PDF
-  archive: 'RE1v97IUYhLJWJheqfknmpOoRdjfAfFXyK9', // "Old Newsletters" subfolder Drive folder ID
+  archive: '1v97IUYhLJWJheqfknmpOoRdjfAfFXyK9', // "Old Newsletters" subfolder Drive folder ID
 } as const
