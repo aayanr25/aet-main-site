@@ -23,13 +23,29 @@ export function isLogo(img: DriveImage): boolean {
   return /logo/i.test(img.name)
 }
 
-/** Real chapter photos — everything in the folder except the logo. */
+/**
+ * The rush chair's headshot lives in the rush photo folder, identified by a
+ * filename containing "33" (e.g. 33-picture.png). Like the logo convention, this
+ * lets the photo be swapped in Drive without touching code — and any future "33"
+ * image is understood to be the same person.
+ */
+export function isRushChair(img: DriveImage): boolean {
+  return /33/.test(img.name)
+}
+
+/** Real chapter photos — everything in the folder except the logo and headshot. */
 export function excludeLogo(images: DriveImage[]): DriveImage[] {
-  return images.filter((img) => !isLogo(img))
+  return images.filter((img) => !isLogo(img) && !isRushChair(img))
 }
 
 /** Finds the chapter logo in a folder, or null if none is present. */
 export async function fetchLogo(folderId: string): Promise<DriveImage | null> {
   const images = await fetchDriveImages(folderId)
   return images.find(isLogo) ?? null
+}
+
+/** Finds the rush chair headshot in a folder, or null if none is present. */
+export async function fetchRushChair(folderId: string): Promise<DriveImage | null> {
+  const images = await fetchDriveImages(folderId)
+  return images.find(isRushChair) ?? null
 }

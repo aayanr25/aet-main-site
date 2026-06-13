@@ -1,7 +1,6 @@
 import RushCalendar from '../components/RushCalendar'
-import PhotoGrid from '../components/PhotoGrid'
+import RushChairStatement from '../components/RushChairStatement'
 import { RUSH } from '../config/rush'
-import { DRIVE_FOLDER_IDS } from '../config/photos'
 
 export default function Rush() {
   return (
@@ -51,11 +50,11 @@ export default function Rush() {
         </div>
       </section>
 
-      {/* Rush photos */}
+      {/* Statement from the Rush Chair */}
       <section className="py-20 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="section-heading text-center mb-10">Rush Highlights</h2>
-          <PhotoGrid folderId={DRIVE_FOLDER_IDS.rush} columns={3} />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="section-heading text-center mb-10">Statement from the Rush Chair</h2>
+          <RushChairStatement />
         </div>
       </section>
     </>
