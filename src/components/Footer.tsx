@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
 
 const socials = [
-  { label: 'Instagram', href: '#' },
-  { label: 'Twitter / X', href: '#' },
-  { label: 'LinkedIn', href: '#' },
+  { label: 'Instagram', href: 'https://www.instagram.com/purduechipsi/?hl=en' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/company/chi-psi-fraternity/' },
+  { label: 'National Fraternity', href: 'https://chipsi.org' },
 ]
 
 export default function Footer() {
