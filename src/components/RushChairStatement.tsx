@@ -1,15 +1,29 @@
 import { useEffect, useState } from 'react'
-import { fetchRushChair } from '../lib/drive'
+import { fetchRushChair, fetchRushStatement, type RushStatement } from '../lib/drive'
 import { DRIVE_FOLDER_IDS } from '../config/photos'
 
 export default function RushChairStatement() {
   const [headshotUrl, setHeadshotUrl] = useState<string | null>(null)
+  const [statement, setStatement] = useState<RushStatement | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   useEffect(() => {
     let active = true
     fetchRushChair(DRIVE_FOLDER_IDS.rush)
       .then((img) => active && setHeadshotUrl(img?.fullUrl ?? null))
       .catch(() => active && setHeadshotUrl(null))
+    return () => {
+      active = false
+    }
+  }, [])
+
+  useEffect(() => {
+    let active = true
+    fetchRushStatement(DRIVE_FOLDER_IDS.rush)
+      .then((s) => active && setStatement(s))
+      .catch(() => active && setError(true))
+      .finally(() => active && setLoading(false))
     return () => {
       active = false
     }
@@ -33,12 +47,26 @@ export default function RushChairStatement() {
 
       {/* Message */}
       <div className="max-w-xl">
-        <p className="text-lg text-gray-700 leading-relaxed">
-          Hey! I'm so glad you're here. Rush is the best way to get to know us — no
-          pressure, just good people and good conversation. Come hang out, ask us
-          anything, and see if Chi Psi feels like home. I can't wait to meet you.
-        </p>
-        <p className="mt-4 font-semibold text-purple">— Your Rush Chair</p>
+        {loading ? (
+          <div className="space-y-3" aria-hidden="true">
+            <div className="h-4 bg-gray-100 rounded animate-pulse" />
+            <div className="h-4 bg-gray-100 rounded animate-pulse w-11/12" />
+            <div className="h-4 bg-gray-100 rounded animate-pulse w-10/12" />
+            <div className="h-4 bg-gray-100 rounded animate-pulse w-1/3 mt-6" />
+          </div>
+        ) : error || !statement ? (
+          <p className="text-gray-500">The rush chair's message will appear here soon.</p>
+        ) : (
+          <>
+            {/* whitespace-pre-line keeps the Doc's own paragraph breaks, verbatim */}
+            <p className="text-lg text-gray-700 leading-relaxed whitespace-pre-line">
+              {statement.body}
+            </p>
+            {statement.signature && (
+              <p className="mt-4 font-semibold text-purple">— {statement.signature}</p>
+            )}
+          </>
+        )}
       </div>
     </div>
   )
