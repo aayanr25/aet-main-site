@@ -3,12 +3,18 @@ node_modules
 
 # Build output
 dist
+.wrangler
 
 # Local env files
 .env
 .env.local
 .env.*.local
 .dev.vars
+
+# Claude Code local settings — machine-specific, may capture secrets in
+# command/permission entries. Never commit. (Shared config goes in settings.json.)
+.claude/settings.local.json
+.claude/*.local.json
 
 # Editor
 .vscode
