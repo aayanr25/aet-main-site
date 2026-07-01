@@ -192,7 +192,7 @@ export default function Brothers() {
                     value={nameInput}
                     onChange={(e) => setNameInput(e.target.value)}
                     disabled={membersLoading}
-                    placeholder="First name, last name, or nickname"
+                    placeholder="Full name"
                     aria-label="Your name"
                     className={INPUT_CLASS}
                   />
